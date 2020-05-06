@@ -1,0 +1,24 @@
+version: "3.5"
+services:
+  backend:
+    build:
+      context: ./
+      args: 
+        - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID:-AKIAIOSFODNN7EXAMPLE}
+        - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY:-wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY}
+    volumes:
+      - .:/app
+      - ./node_modules:/app/node_modules:delegated
+    environment:
+      - NODE_ENV=development
+    tty: true
+    stdin_open: true
+  dynamodb:
+    image: amazon/dynamodb-local
+    command: -jar DynamoDBLocal.jar -dbPath /home/dynamodblocal/data
+    volumes:
+      - dynamodb:/home/dynamodblocal/data
+    ports:
+      - 50706:8000
+volumes:
+  dynamodb:
