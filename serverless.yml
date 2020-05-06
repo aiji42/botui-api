@@ -8,10 +8,22 @@ custom:
   webpack:
     webpackConfig: ./webpack.config.js
     includeModules: true
+  dynamodb:
+    stages:
+      - dev
+    start:
+      host: dynamodb
+      port: 8000
+    seed:
+      dev:
+        sources:
+          - table: botui-conversations
+            sources: [./db/seeds/conversations.json]
 
 # Add the serverless-webpack plugin
 plugins:
   - serverless-webpack
+  - serverless-dynamodb-local
   - serverless-offline
 
 provider:
@@ -29,3 +41,19 @@ functions:
       - http:
           method: get
           path: hello
+
+resources:
+  Resources:
+    coversationsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: botui-conversations
+        AttributeDefinitions:
+          - AttributeName: serviceCode
+            AttributeType: S
+        KeySchema:
+          - AttributeName: serviceCode
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1

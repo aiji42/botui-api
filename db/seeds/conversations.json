@@ -1,0 +1,1038 @@
+[
+  {
+    "conversations": [
+      {
+        "actions": [
+          {
+            "human": false,
+            "options": {
+              "content": "いらっしゃいませ！案内にしたがってお手続きください。"
+            },
+            "type": "message"
+          },
+          {
+            "human": false,
+            "options": {
+              "content": "ご購入完了まで、私がお手伝いさせていただきます。"
+            },
+            "type": "message"
+          }
+        ],
+        "id": "hello"
+      },
+      {
+        "actions": [
+          {
+            "human": false,
+            "options": {
+              "content": "お名前を教えて下さい。"
+            },
+            "type": "message"
+          },
+          {
+            "human": true,
+            "options": {
+              "content": "FormName"
+            },
+            "type": "component"
+          }
+        ],
+        "countable": true,
+        "id": "userInfo-name",
+        "trigger": "hello"
+      },
+      {
+        "actions": [
+          {
+            "human": false,
+            "options": {
+              "content": "次にご住所をお願いします。"
+            },
+            "type": "message"
+          },
+          {
+            "human": true,
+            "options": {
+              "content": "FormAddress"
+            },
+            "type": "component"
+          }
+        ],
+        "countable": true,
+        "id": "userInfo-address",
+        "trigger": "userInfo-name"
+      },
+      {
+        "actions": [
+          {
+            "human": false,
+            "options": {
+              "content": "メールアドレスをお願いします。"
+            },
+            "type": "message"
+          },
+          {
+            "human": true,
+            "options": {
+              "content": "FormEmail"
+            },
+            "type": "component"
+          }
+        ],
+        "countable": true,
+        "id": "userInfo-email",
+        "trigger": "userInfo-address"
+      },
+      {
+        "actions": [
+          {
+            "human": false,
+            "options": {
+              "content": "お届けの事でご連絡する場合がありますので、繋がる電話番号をお願いします。"
+            },
+            "type": "message"
+          },
+          {
+            "human": true,
+            "options": {
+              "content": "FormTel"
+            },
+            "type": "component"
+          }
+        ],
+        "countable": true,
+        "id": "userInfo-tel",
+        "trigger": "userInfo-email"
+      },
+      {
+        "actions": [
+          {
+            "human": false,
+            "options": {
+              "content": "お得情報などが届くメールマガジンに登録しますか？"
+            },
+            "type": "message"
+          },
+          {
+            "human": true,
+            "options": {
+              "content": "FormCustomRadioGroup",
+              "props": {
+                "choices": {
+                  "false": "登録しない",
+                  "true": "登録する"
+                },
+                "name": "mailmagazine"
+              }
+            },
+            "type": "component"
+          }
+        ],
+        "countable": true,
+        "id": "userInfo-mailmagazine",
+        "trigger": "userInfo-tel"
+      },
+      {
+        "actions": [
+          {
+            "function": "checkoutUserInfo",
+            "human": false,
+            "type": "function",
+            "whenReturn": {
+              "true": "skip"
+            }
+          },
+          {
+            "human": false,
+            "options": {
+              "dataStoreAnnounce": "checkoutUserInfo"
+            },
+            "type": "message"
+          },
+          {
+            "human": false,
+            "type": "stop"
+          }
+        ],
+        "countable": false,
+        "id": "userInfo-checout",
+        "trigger": "userInfo-mailmagazine"
+      },
+      {
+        "actions": [
+          {
+            "human": false,
+            "options": {
+              "content": "クーポンコードをお持ちですか？"
+            },
+            "type": "message"
+          },
+          {
+            "human": true,
+            "options": {
+              "content": "FormCustomRadioGroup",
+              "props": {
+                "choices": {
+                  "false": "持っていない",
+                  "true": "持っている"
+                },
+                "name": "couponHaving"
+              }
+            },
+            "type": "component"
+          }
+        ],
+        "countable": true,
+        "id": "deliveryPayment-couponHaving",
+        "trigger": "userInfo-checout"
+      },
+      {
+        "actions": [
+          {
+            "function": "isCouponHaving",
+            "human": false,
+            "type": "function",
+            "whenReturn": {
+              "false": "skip",
+              "true": "continue"
+            }
+          },
+          {
+            "human": false,
+            "options": {
+              "content": "クーポンコードを入力して下さい。"
+            },
+            "type": "message"
+          },
+          {
+            "human": true,
+            "options": {
+              "content": "FormCustomInput",
+              "props": {
+                "inputs": [
+                  {
+                    "name": "coupon",
+                    "placeholder": "クーポン番号",
+                    "title": "クーポン",
+                    "type": "text",
+                    "validation": {
+                      "max": [
+                        200,
+                        "入力内容が長すぎます"
+                      ],
+                      "required": [
+                        "入力してください"
+                      ],
+                      "type": "string"
+                    }
+                  }
+                ]
+              }
+            },
+            "type": "component"
+          }
+        ],
+        "countable": true,
+        "id": "deliveryPayment-couponCode",
+        "trigger": "deliveryPayment-couponHaving"
+      },
+      {
+        "actions": [
+          {
+            "function": "checkoutAndValidateCoupon",
+            "human": false,
+            "type": "function",
+            "whenReturn": {
+              "false": "continue",
+              "true": "skip"
+            }
+          },
+          {
+            "human": false,
+            "options": {
+              "content": "クーポンコードが間違っているようです。確認して再入力して下さい。"
+            },
+            "type": "message"
+          },
+          {
+            "human": false,
+            "options": {
+              "content": "クーポンコードをお持ちでない場合は、さかのぼって「持っていない」を選択してください。"
+            },
+            "type": "message"
+          },
+          {
+            "human": false,
+            "type": "stop"
+          }
+        ],
+        "countable": false,
+        "id": "deliveryPayment-checkoutCoupon",
+        "trigger": "deliveryPayment-couponCode"
+      },
+      {
+        "actions": [
+          {
+            "function": "paymentMethods",
+            "human": false,
+            "type": "function"
+          },
+          {
+            "human": false,
+            "options": {
+              "content": "お支払い方法を選択してください。"
+            },
+            "type": "message"
+          },
+          {
+            "human": true,
+            "options": {
+              "content": "FormCustomRadioGroup",
+              "props": {
+                "name": "payment",
+                "stored": true,
+                "storedName": "paymentMethods"
+              }
+            },
+            "type": "component"
+          }
+        ],
+        "countable": true,
+        "id": "deliveryPayment-payment",
+        "trigger": "deliveryPayment-checkoutCoupon"
+      },
+      {
+        "actions": [
+          {
+            "function": "checkoutPaymentMethod",
+            "human": false,
+            "type": "function"
+          }
+        ],
+        "countable": false,
+        "id": "deliveryPayment-checkoutPaymentMethod",
+        "trigger": "deliveryPayment-payment"
+      },
+      {
+        "actions": [
+          {
+            "function": "isSelectedCredit",
+            "human": false,
+            "type": "function",
+            "whenReturn": {
+              "false": "skip",
+              "true": "continue"
+            }
+          },
+          {
+            "human": false,
+            "options": {
+              "content": "クレジットカードの情報を入力して下さい。"
+            },
+            "type": "message"
+          },
+          {
+            "human": true,
+            "options": {
+              "content": "FormCreditCard"
+            },
+            "type": "component"
+          }
+        ],
+        "countable": true,
+        "id": "deliveryPayment-creditCard",
+        "trigger": "deliveryPayment-checkoutPaymentMethod"
+      },
+      {
+        "actions": [
+          {
+            "function": "isSelectedCredit",
+            "human": false,
+            "type": "function",
+            "whenReturn": {
+              "false": "skip",
+              "true": "continue"
+            }
+          },
+          {
+            "function": "checkoutCard",
+            "human": false,
+            "type": "function"
+          }
+        ],
+        "countable": false,
+        "id": "deliveryPayment-checkoutCard",
+        "trigger": "deliveryPayment-creditCard"
+      },
+      {
+        "actions": [
+          {
+            "function": "isSelectedCredit",
+            "human": false,
+            "type": "function",
+            "whenReturn": {
+              "false": "skip",
+              "true": "continue"
+            }
+          },
+          {
+            "function": "paymentTimeChoices",
+            "human": false,
+            "type": "function"
+          },
+          {
+            "human": false,
+            "options": {
+              "content": "お支払い回数を選択してください。"
+            },
+            "type": "message"
+          },
+          {
+            "human": true,
+            "options": {
+              "content": "FormCustomSelect",
+              "props": {
+                "selects": [
+                  {
+                    "name": "paymentTime",
+                    "stored": true,
+                    "storedName": "paymentTimeChoices",
+                    "title": "支払回数"
+                  }
+                ]
+              }
+            },
+            "type": "component"
+          }
+        ],
+        "countable": true,
+        "id": "deliveryPayment-paymentTime",
+        "trigger": "deliveryPayment-checkoutCard"
+      },
+      {
+        "actions": [
+          {
+            "function": "isSelectedCredit",
+            "human": false,
+            "type": "function",
+            "whenReturn": {
+              "false": "skip",
+              "true": "continue"
+            }
+          },
+          {
+            "function": "checkoutPaymentTime",
+            "human": false,
+            "type": "function"
+          }
+        ],
+        "countable": false,
+        "id": "deliveryPayment-checkoutPaymentTime",
+        "trigger": "deliveryPayment-paymentTime"
+      },
+      {
+        "actions": [
+          {
+            "human": false,
+            "options": {
+              "content": "会員登録を希望されますか？会員登録していただくと、次回以降ポイント・クーポンがご利用いただけます。"
+            },
+            "type": "message"
+          },
+          {
+            "human": true,
+            "options": {
+              "content": "FormCustomRadioGroup",
+              "props": {
+                "choices": {
+                  "false": "登録しない",
+                  "true": "登録する"
+                },
+                "name": "membership"
+              }
+            },
+            "type": "component"
+          }
+        ],
+        "countable": true,
+        "id": "membership-registerOpt",
+        "trigger": "deliveryPayment-checkoutPaymentTime"
+      },
+      {
+        "actions": [
+          {
+            "function": "isMembershipOptIn",
+            "human": false,
+            "type": "function",
+            "whenReturn": {
+              "false": "skip",
+              "true": "continue"
+            }
+          },
+          {
+            "human": false,
+            "options": {
+              "content": "ご希望のパスワードを入力して下さい。"
+            },
+            "type": "message"
+          },
+          {
+            "human": true,
+            "options": {
+              "content": "FormCustomInput",
+              "props": {
+                "inputs": [
+                  {
+                    "name": "password",
+                    "title": "パスワード",
+                    "type": "password",
+                    "validation": {
+                      "matches": [
+                        {},
+                        "使用できない文字が含まれています(半角英数字と記号で入力してください)"
+                      ],
+                      "max": [
+                        30,
+                        "30文字以内で入力してください"
+                      ],
+                      "min": [
+                        6,
+                        "6文字以上で入力してください"
+                      ],
+                      "required": [
+                        "入力してください"
+                      ],
+                      "type": "string"
+                    }
+                  }
+                ]
+              }
+            },
+            "type": "component"
+          }
+        ],
+        "countable": true,
+        "id": "membership-password",
+        "trigger": "membership-registerOpt"
+      },
+      {
+        "actions": [
+          {
+            "function": "confirmHTML",
+            "human": false,
+            "type": "function"
+          },
+          {
+            "human": false,
+            "options": {
+              "content": "ご購入内容の確認を行い、お間違いがなければ確定ボタンをタップしてください。"
+            },
+            "type": "message"
+          },
+          {
+            "human": true,
+            "options": {
+              "content": "FormConfirmWithInnerHTML"
+            },
+            "type": "component"
+          }
+        ],
+        "id": "confirm",
+        "trigger": "membership-password"
+      },
+      {
+        "actions": [
+          {
+            "function": "isMembershipOptIn",
+            "human": false,
+            "type": "function",
+            "whenReturn": {
+              "false": "skip",
+              "true": "continue"
+            }
+          },
+          {
+            "function": "membershipRegister",
+            "human": false,
+            "type": "function",
+            "whenReturn": {
+              "true": "skip"
+            }
+          },
+          {
+            "human": false,
+            "options": {
+              "dataStoreAnnounce": "membershipRegister"
+            },
+            "type": "message"
+          },
+          {
+            "human": false,
+            "options": {
+              "content": "さかのぼって入力内容を変更するか、会員のお客様はログインページからご購入ください。"
+            },
+            "type": "message"
+          },
+          {
+            "human": true,
+            "options": {
+              "content": "<a href=\"https://www.amepla.jp/p/login\" target=\"_top\">ログインページはこちら</a>"
+            },
+            "type": "message"
+          },
+          {
+            "human": false,
+            "type": "stop"
+          }
+        ],
+        "countable": false,
+        "id": "membership-register",
+        "trigger": "confirm"
+      },
+      {
+        "actions": [
+          {
+            "human": false,
+            "options": {
+              "content": "ご購入ありがとうございます。お手続きをしております。"
+            },
+            "type": "message"
+          },
+          {
+            "function": "conversion",
+            "human": false,
+            "type": "function",
+            "whenReturn": {
+              "true": "skip"
+            }
+          },
+          {
+            "human": false,
+            "options": {
+              "content": "お手続きのため、自動的にページを遷移させていただきます。"
+            },
+            "type": "message"
+          },
+          {
+            "function": "redirectToConversion",
+            "human": false,
+            "type": "function"
+          },
+          {
+            "human": false,
+            "type": "stop"
+          }
+        ],
+        "id": "conversion",
+        "trigger": "membership-register"
+      },
+      {
+        "actions": [
+          {
+            "human": false,
+            "options": {
+              "content": "お手続きが完了しました。サンクスページに移動します。"
+            },
+            "type": "message"
+          },
+          {
+            "function": "goToThanks",
+            "human": false,
+            "type": "function"
+          }
+        ],
+        "id": "goToThanksPage",
+        "trigger": "conversion"
+      }
+    ],
+    "serviceCode": "amepla"
+  },
+  {
+    "conversations": [
+      {
+        "actions": [
+          {
+            "human": false,
+            "options": {
+              "content": "いらっしゃいませ！案内にしたがってお手続きください。"
+            },
+            "type": "message"
+          },
+          {
+            "human": false,
+            "options": {
+              "content": "ご購入完了まで、私がお手伝いさせていただきます。"
+            },
+            "type": "message"
+          }
+        ],
+        "id": "hello"
+      },
+      {
+        "actions": [
+          {
+            "human": false,
+            "options": {
+              "content": "まずはあなたの性別を選択してください。"
+            },
+            "type": "message"
+          },
+          {
+            "human": true,
+            "options": {
+              "content": "FormCustomRadioGroup",
+              "props": {
+                "choices": {
+                  "1": "男性",
+                  "2": "女性"
+                },
+                "name": "gender"
+              }
+            },
+            "type": "component"
+          }
+        ],
+        "countable": true,
+        "id": "userInfo-gender",
+        "trigger": "hello"
+      },
+      {
+        "actions": [
+          {
+            "human": false,
+            "options": {
+              "content": "お名前を教えて下さい。"
+            },
+            "type": "message"
+          },
+          {
+            "human": true,
+            "options": {
+              "content": "FormName"
+            },
+            "type": "component"
+          }
+        ],
+        "countable": true,
+        "id": "userInfo-name",
+        "trigger": "userInfo-gender"
+      },
+      {
+        "actions": [
+          {
+            "human": false,
+            "options": {
+              "content": "次にご住所をお願いします。"
+            },
+            "type": "message"
+          },
+          {
+            "human": true,
+            "options": {
+              "content": "FormAddress"
+            },
+            "type": "component"
+          }
+        ],
+        "countable": true,
+        "id": "userInfo-address",
+        "trigger": "userInfo-name"
+      },
+      {
+        "actions": [
+          {
+            "human": false,
+            "options": {
+              "content": "メールアドレスをお願いします。"
+            },
+            "type": "message"
+          },
+          {
+            "human": true,
+            "options": {
+              "content": "FormEmail"
+            },
+            "type": "component"
+          }
+        ],
+        "countable": true,
+        "id": "userInfo-email",
+        "trigger": "userInfo-address"
+      },
+      {
+        "actions": [
+          {
+            "human": false,
+            "options": {
+              "content": "お届けの事でご連絡する場合がありますので、繋がる電話番号をお願いします。"
+            },
+            "type": "message"
+          },
+          {
+            "human": true,
+            "options": {
+              "content": "FormTel"
+            },
+            "type": "component"
+          }
+        ],
+        "countable": true,
+        "id": "userInfo-tel",
+        "trigger": "userInfo-email"
+      },
+      {
+        "actions": [
+          {
+            "human": false,
+            "options": {
+              "content": "生年月日を教えてください。"
+            },
+            "type": "message"
+          },
+          {
+            "human": true,
+            "options": {
+              "content": "FormBirthDay"
+            },
+            "type": "component"
+          }
+        ],
+        "countable": true,
+        "id": "userInfo-birthday",
+        "trigger": "userInfo-tel"
+      },
+      {
+        "actions": [
+          {
+            "human": false,
+            "options": {
+              "content": "neltureのお得情報などが届くメールマガジンに登録しますか？"
+            },
+            "type": "message"
+          },
+          {
+            "human": true,
+            "options": {
+              "content": "FormCustomRadioGroup",
+              "props": {
+                "choices": {
+                  "false": "登録しない",
+                  "true": "登録する"
+                },
+                "name": "mailmagazine"
+              }
+            },
+            "type": "component"
+          }
+        ],
+        "countable": true,
+        "id": "userInfo-mailmagazine",
+        "trigger": "userInfo-birthday"
+      },
+      {
+        "actions": [
+          {
+            "function": "isSelectableDeriveryDateTime",
+            "human": false,
+            "type": "function",
+            "whenReturn": {
+              "false": "skip",
+              "true": "continue"
+            }
+          },
+          {
+            "function": "deliveryDateChoices",
+            "human": false,
+            "type": "function"
+          },
+          {
+            "function": "deliveryTimeChoices",
+            "human": false,
+            "type": "function"
+          },
+          {
+            "human": false,
+            "options": {
+              "content": "お届け日時の希望を選択してください。"
+            },
+            "type": "message"
+          },
+          {
+            "human": true,
+            "options": {
+              "content": "FormCustomSelect",
+              "props": {
+                "selects": [
+                  {
+                    "name": "deliveryDate",
+                    "stored": true,
+                    "storedName": "deliveryDateChoices",
+                    "title": "お届け希望日"
+                  },
+                  {
+                    "name": "deliveryTime",
+                    "stored": true,
+                    "storedName": "deliveryTimeChoices",
+                    "title": "お届け希望時間帯"
+                  }
+                ]
+              }
+            },
+            "type": "component"
+          }
+        ],
+        "countable": true,
+        "id": "deliveryPayment-delivery",
+        "trigger": "userInfo-mailmagazine"
+      },
+      {
+        "actions": [
+          {
+            "function": "paymentMethods",
+            "human": false,
+            "type": "function"
+          },
+          {
+            "human": false,
+            "options": {
+              "content": "お支払い方法を選択してください。"
+            },
+            "type": "message"
+          },
+          {
+            "human": true,
+            "options": {
+              "content": "FormCustomRadioGroup",
+              "props": {
+                "name": "payment",
+                "stored": true,
+                "storedName": "paymentMethods"
+              }
+            },
+            "type": "component"
+          }
+        ],
+        "countable": true,
+        "id": "deliveryPayment-payment",
+        "trigger": "deliveryPayment-delivery"
+      },
+      {
+        "actions": [
+          {
+            "function": "isCashLess",
+            "human": false,
+            "type": "function",
+            "whenReturn": {
+              "false": "skip",
+              "true": "continue"
+            }
+          },
+          {
+            "human": false,
+            "options": {
+              "content": "CashLess",
+              "icon": false
+            },
+            "type": "component"
+          }
+        ],
+        "id": "cashless",
+        "trigger": "deliveryPayment-payment"
+      },
+      {
+        "actions": [
+          {
+            "function": "confirm",
+            "human": false,
+            "type": "function"
+          },
+          {
+            "human": false,
+            "options": {
+              "content": "ご購入内容の確認を行い、お間違いがなければ確定ボタンをタップしてください。"
+            },
+            "type": "message"
+          },
+          {
+            "human": true,
+            "options": {
+              "content": "FormConfirm"
+            },
+            "type": "component"
+          }
+        ],
+        "id": "confirm",
+        "trigger": "cashless"
+      },
+      {
+        "actions": [
+          {
+            "human": false,
+            "options": {
+              "content": "ご購入ありがとうございます。お手続きをしております。"
+            },
+            "type": "message"
+          },
+          {
+            "function": "conversionPrepare",
+            "human": false,
+            "type": "function",
+            "whenReturn": {
+              "true": "continue"
+            }
+          },
+          {
+            "function": "shouldGoPaymentPage",
+            "human": false,
+            "type": "function",
+            "whenReturn": {
+              "false": {
+                "id": "conversion-cash"
+              },
+              "true": {
+                "id": "conversion-not-cash"
+              }
+            }
+          }
+        ],
+        "id": "cv-repare",
+        "trigger": "confirm"
+      },
+      {
+        "actions": [
+          {
+            "human": false,
+            "options": {
+              "content": "自動的にお支払いページへ移動します。"
+            },
+            "type": "message"
+          },
+          {
+            "function": "conversion",
+            "human": false,
+            "type": "function"
+          }
+        ],
+        "id": "conversion-not-cash"
+      },
+      {
+        "actions": [
+          {
+            "human": false,
+            "options": {
+              "content": "ご注文完了です。自動的にページを移動します。"
+            },
+            "type": "message"
+          },
+          {
+            "function": "conversion",
+            "human": false,
+            "type": "function"
+          }
+        ],
+        "id": "conversion-cash"
+      }
+    ],
+    "serviceCode": "nelture"
+  }
+]
