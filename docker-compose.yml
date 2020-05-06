@@ -3,15 +3,14 @@ services:
   backend:
     build:
       context: ./
-      args:
-        - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID:-AKIAIOSFODNN7EXAMPLE}
-        - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY:-wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY}
     volumes:
       - .:/app
       - ./node_modules:/app/node_modules:delegated
     environment:
       - NODE_ENV=development
       - AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION:-dev}
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID:-AKIAIOSFODNN7EXAMPLE}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY:-wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY}
     ports:
       - 3000:3000
     tty: true

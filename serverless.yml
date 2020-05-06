@@ -8,16 +8,19 @@ custom:
   webpack:
     webpackConfig: ./webpack.config.js
     includeModules: true
+  serverless-offline:
+    useChildProcesses: true
   dynamodb:
     stages:
       - dev
     start:
       host: dynamodb
       port: 8000
+      noStart: true
     seed:
       dev:
         sources:
-          - table: botui-conversations
+          - table: ${self:resources.Resources.coversationsTable.Properties.TableName}
             sources: [./db/seeds/conversations.json]
 
 # Add the serverless-webpack plugin
@@ -33,21 +36,24 @@ provider:
     minimumCompressionSize: 1024 # Enable gzip compression for responses > 1 KB
   environment:
     AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
+    AWS_ACCESS_KEY_ID: ${env:AWS_ACCESS_KEY_ID}
+    AWS_SECRET_ACCESS_KEY: ${env:AWS_SECRET_ACCESS_KEY}
+    AWS_DEFAULT_REGION: ${env:AWS_DEFAULT_REGION}
 
 functions:
-  hello:
-    handler: handler.hello
+  getConversation:
+    handler: handler.getConversation
     events:
       - http:
           method: get
-          path: hello
+          path: conversations/{serviceCode}
 
 resources:
   Resources:
     coversationsTable:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: botui-conversations
+        TableName: ${self:service.name}-conversations
         AttributeDefinitions:
           - AttributeName: serviceCode
             AttributeType: S
