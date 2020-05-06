@@ -16,5 +16,3 @@ RUN sls config credentials --provider aws --key $AWS_ACCESS_KEY_ID --secret $AWS
 
 RUN mkdir -p /app
 WORKDIR /app
-
-ENTRYPOINT ["/bin/bash", "-c"]
