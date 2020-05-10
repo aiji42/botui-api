@@ -645,7 +645,8 @@
         "trigger": "conversion"
       }
     ],
-    "serviceCode": "amepla"
+    "code": "amepla",
+    "isActive": true
   },
   {
     "conversations": [
@@ -1033,6 +1034,7 @@
         "id": "conversion-cash"
       }
     ],
-    "serviceCode": "nelture"
+    "code": "nelture",
+    "isActive": true
   }
 ]

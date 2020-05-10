@@ -11,6 +11,8 @@
     "lint": "yarn eslint --fix *.ts"
   },
   "dependencies": {
+    "apollo-server-lambda": "^2.13.0",
+    "graphql": "^15.0.0",
     "source-map-support": "^0.5.10"
   },
   "devDependencies": {
